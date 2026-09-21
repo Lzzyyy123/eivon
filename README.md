@@ -1,44 +1,77 @@
-# Eivon
+<p align="center">
+  <img src="assets/eivon-logo.png" alt="Eivon logo" width="156" />
+</p>
 
-**A place for autonomous intelligence.**
+<h1 align="center">Eivon</h1>
 
-Eivon is a self-hosted, domain-independent agent workbench. It gives teams a control plane for composing models, tools, skills, knowledge sources and workflows into versioned Agents, then running them through an observable, resumable runtime.
+<p align="center"><strong>Build domain agents from versioned capabilities.</strong></p>
 
-The core does not know what industry an Agent serves. A customer support Agent, an operations Agent and an agriculture Agent use the same resource contracts. Business entities and permissions belong in extensions and Bundle packages.
+<p align="center">
+  <a href="README.md">English</a> · <a href="README.zh-CN.md">简体中文</a>
+</p>
 
-![Eivon conversations and private file delivery](docs/images/agent-conversation.png)
+<p align="center">
+  <a href="https://github.com/Lzzyyy123/eivon/actions/workflows/ci.yml"><img src="https://github.com/Lzzyyy123/eivon/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-7dd3c7.svg" alt="Apache 2.0 license" /></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12%2B-3776ab.svg" alt="Python 3.12 or newer" /></a>
+</p>
 
-Console screenshot from the deterministic browser acceptance fixture. See the [conversation guide](docs/conversations.md) for multi-turn sessions, tool approvals and generated files.
+Eivon is a self-hosted, domain-independent agent framework. It provides a control plane for composing models, prompts, tools, skills, knowledge sources and workflows into versioned Agents, then running them through an observable and resumable runtime.
 
-## What is included
+The core does not know whether an Agent serves agriculture, customer support, operations, research or a completely new domain. A vertical implementation lives in resources, Bundles and reviewed extensions. The framework owns the contracts, execution boundary, persistence, approvals, evaluation and management experience.
 
-- A versioned resource model for models, prompts, tools, skills, Bundles, Agents and Workflows.
-- Immutable release snapshots: each Run records the exact dependency versions it uses.
-- Streaming model and embedding adapters for OpenAI-compatible endpoints plus explicitly labelled offline providers.
-- Typed tool execution with JSON Schema validation, timeouts, result budgets, write approvals and outbound host allowlists.
-- Durable Runs with ordered events, cancellation, approval/input waiting, resume support and worker leases.
-- Workspace-scoped resources, roles, API keys, CSRF-protected sessions, encrypted credentials and audit events.
-- A dark management console with setup, overview, resource authoring, Agent publishing, Playground, Run history, Knowledge connections with lexical, semantic and hybrid retrieval and workspace administration (switching, members, credentials, API keys and audit).
-- An evaluation center with immutable test sets, historical batches, version comparison, rule scores, model-generated failure analysis, human reviews and instruction candidates that require approval before updating a draft.
-- SQLite for a zero-dependency local instance and PostgreSQL for deployment.
-- A deployment-time Python extension SDK with optional process isolation; HTTP tools are configured with explicit server allowlists.
+![Eivon conversation and private file delivery](docs/images/agent-conversation.png)
 
-Python extensions run with the deployment's privileges. Eivon is not a sandbox for untrusted extension code. Read [SECURITY.md](SECURITY.md) before exposing an instance.
+## Why Eivon
+
+- **Portable domain design** — describe a vertical domain with versioned resources and a Bundle instead of forking the runtime.
+- **A control plane, not a prompt demo** — publish immutable releases, inspect Runs, resume waiting work and audit changes.
+- **Open integration boundaries** — use OpenAI-compatible models, HTTP tools, Python extensions, MCP tools and MCP knowledge sources.
+- **Self-hosted by default** — start with SQLite and the offline demo model; move to PostgreSQL and external providers when needed.
+- **Human control where it matters** — write tools, approvals, credentials, workspace permissions and evaluation proposals have explicit boundaries.
+
+## Core concepts
+
+| Concept | Purpose |
+| --- | --- |
+| **Resource** | A validated Model, Embedding, Prompt, Tool, Skill, Bundle, Workflow, Agent or Connection. |
+| **Release** | An immutable resource version with frozen dependency snapshots and digests. |
+| **Bundle** | A reusable domain capability pack that groups tools, skills, prompts, workflows and knowledge collections. |
+| **Agent** | A model plus instructions, Bundles and an execution policy. |
+| **Workflow** | A typed sequence of Input, Tool, Prompt and Condition steps with persistent branching. |
+| **Run** | A durable execution with ordered events, checkpoints, approvals, cancellation and recovery. |
+| **Evaluation** | Historical test batches, comparison, human review and model-assisted improvement proposals. |
+
+```mermaid
+flowchart LR
+    Console[Management console] --> API[FastAPI control plane]
+    API --> Resources[Versioned resources]
+    API --> Runtime[Durable Agent runtime]
+    Resources --> Runtime
+    Runtime --> Models[Model adapters]
+    Runtime --> Tools[HTTP / Python / MCP tools]
+    Runtime --> Knowledge[Knowledge + Embeddings]
+    Runtime --> Runs[(Runs, events, artifacts)]
+    Evaluations[Evaluation center] --> Resources
+    Evaluations --> Runs
+```
 
 ## Quick start
 
-Requirements: Python 3.12+, Node 22+ for building the console.
+Requirements: Python 3.12+, Node 22+ and, for the browser acceptance suite, a Chromium installation.
 
 ```bash
+git clone https://github.com/Lzzyyy123/eivon.git
+cd eivon
 python -m venv .venv
 .venv/bin/pip install -e '.[dev]'
-cd console && npm install && npm run build && cd ..
+cd console && npm ci && npm run build && cd ..
 .venv/bin/eivon init
 .venv/bin/eivon migrate
 .venv/bin/eivon serve --host 127.0.0.1 --port 8787
 ```
 
-Open <http://127.0.0.1:8787>. The first command creates `var/setup-token`; paste that token into the setup screen. The offline demo model can be configured from the Resource library, so no model API key is needed for the first walkthrough.
+Open <http://127.0.0.1:8787>. The first command creates `var/setup-token`; paste that token into the setup screen. The offline demo model lets you complete the first walkthrough without a provider key.
 
 For PostgreSQL and a production-like container deployment:
 
@@ -48,54 +81,95 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Before upgrades, run `eivon backup` for SQLite or your PostgreSQL dump workflow and rehearse `eivon restore --force` with API and workers stopped. The default Compose service runs an inline worker. For a separate worker, set `EIVON_INLINE_WORKER=false` for the API service and start the worker profile with `docker compose -f docker-compose.yml -f docker-compose.worker.yml up --build`.
+Before upgrades, create a backup and rehearse restore with the API and workers stopped. See [operations.md](docs/operations.md) for SQLite and PostgreSQL procedures.
 
-## First Agent walkthrough
+## Build your first Agent
 
-1. Complete the setup screen.
-2. Open **Resources → New resource**, create a `model` using the offline demo provider, and publish it.
-3. Create a `prompt` and publish it.
-4. Open **Agents → New resource**, select the published model and prompt, and publish the Agent.
-5. Open **Playground**, select the published Agent, send a message and watch the ordered execution trace. If a tool requires approval, the run pauses with an approval card and resumes from the same checkpoint.
+1. Complete the setup screen and open **Resources → New resource**.
+2. Create and publish a `model` using the offline demo provider.
+3. Create and publish a `prompt`.
+4. Create an `agent` and select the published model and prompt.
+5. Open **Playground**, choose the Agent and send a message.
+6. Inspect the ordered trace in **Run history**. If a write tool needs approval, the Run pauses and resumes from the same checkpoint after approval.
 
-For a real provider, create an encrypted Credential in Settings or through the API, reference its ID from a model resource, and add the model endpoint host to `EIVON_OUTBOUND_HOSTS`. Secrets are never returned by the credential API.
+The console is only one client. The same flow is available through the FastAPI schema at `/docs` and the `/api/v1` endpoints.
 
-## Public API shape
+## Build a vertical domain package
 
-The FastAPI schema is available at `/docs`. Important groups are:
+Keep domain code outside `eivon.core`. A trusted Python extension can register a domain tool:
 
-- `/api/v1/setup`, `/auth/*`, `/workspaces`, `/members`, `/api-keys`, `/credentials`, `/audit-events`
-- `/api/v1/resources`, `/resources/{id}/publish`, `/resources/{id}/versions`
-- `/api/v1/sessions`, `/runs`, `/runs/{id}/events`, `/runs/{id}/cancel`, `/runs/{id}/resume`
-- `/api/v1/evaluations`, `/evaluations/{id}/run`, `/evaluation-jobs/{id}`
-- `/api/v1/artifacts/{id}/download`
+```python
+from eivon.core.contracts import ExecutionContext, ToolResult
 
-Use a session cookie from the browser or an API key as `Authorization: Bearer eiv_...`. Cookie writes require the `x-csrf-token` returned by setup/login. API keys are workspace-bound and only shown once when created.
+async def lookup_case(arguments: dict, context: ExecutionContext) -> ToolResult:
+    case_id = str(arguments.get("case_id", "unknown"))
+    # Enforce domain-level authorization before reading a real system.
+    return ToolResult(success=True, data={"case_id": case_id, "workspace": context.workspace_id})
 
-## Extension model
+def register(registry):
+    registry.register_tool("lookup_case", lookup_case)
+```
 
-A trusted Python extension module exports `register(registry)` and registers async handlers. A Tool resource chooses `adapter: python` and the registered entrypoint. Keep domain implementations outside `eivon.core`; the `examples/` directory contains a minimal resource graph, two synthetic extension modules and importable Bundle starters.
+Create a Tool resource for the registered entrypoint, publish it, and compose it into a Bundle or Agent. The Bundle schema is deliberately generic; see the [customer-support](examples/bundles/customer_support.json) and [operations](examples/bundles/operations.json) starters. The [extension guide](docs/extensions.md) explains trusted and process-isolated deployment modes.
 
-HTTP tools use a configured URL and method, but the deployment must explicitly allow the destination via `EIVON_OUTBOUND_HOSTS`. Arbitrary URLs, embedded credentials, redirects and secret headers are rejected.
+## What is included
 
-## Development checks
+- Workspace-scoped users, roles, API keys, encrypted credentials and audit events.
+- Immutable releases, optimistic draft revisions, dependency validation, comparison, activation rollback and archive/restore.
+- Streaming model adapters, tool-call validation, timeouts, result budgets, outbound host allowlists and write approvals.
+- Durable Runs with ordered events, cancellation, input/approval waits, resumable checkpoints and worker lease fencing.
+- Sessions, conversations, private artifacts and authenticated file downloads.
+- Knowledge collections with local or OpenAI-compatible Embeddings, lexical/semantic/hybrid retrieval and HTTP JSON/MCP synchronization.
+- Evaluation batches, historical comparison, deterministic scoring, human review and bounded model-generated suggestions.
+- A dark management console for setup, resources, Agents, Playground, Workflow Studio, knowledge, Runs, evaluations and workspace administration.
+- Docker Compose deployment, SQLite backup/restore, PostgreSQL dump/restore and GitHub Actions checks.
+
+## Documentation
+
+| Topic | Guide |
+| --- | --- |
+| Architecture and boundaries | [docs/architecture.md](docs/architecture.md) |
+| Resource contracts and releases | [docs/resources.md](docs/resources.md) |
+| Workflow authoring and execution | [docs/workflows.md](docs/workflows.md) |
+| Knowledge and retrieval | [docs/resources.md](docs/resources.md) |
+| Extensions and domain packages | [docs/extensions.md](docs/extensions.md) |
+| Evaluation and improvement | [docs/evaluations.md](docs/evaluations.md) |
+| Workspace administration | [docs/administration.md](docs/administration.md) |
+| Operations and backup | [docs/operations.md](docs/operations.md) |
+| API surface | [docs/api.md](docs/api.md) |
+| Delivery and verification | [docs/DELIVERY.md](docs/DELIVERY.md) |
+
+## Repository layout
+
+```text
+src/eivon/       Python contracts, runtime, adapters and FastAPI services
+console/         React + Vite management console
+examples/        Minimal resource graph, extensions and vertical Bundle starters
+tests/           Deterministic backend tests
+scripts/         Release checks, browser server, stress and database rehearsal
+docs/            Architecture, API, operations and extension guides
+```
+
+## Security boundary
+
+Python extensions run with deployment privileges. Process isolation reduces shared process state but is not a complete OS sandbox. Run extension workers with a dedicated user/container and restrict `EIVON_EXTENSIONS` to reviewed modules. HTTP and MCP destinations require explicit outbound host allowlists, and credentials are stored as encrypted references rather than returned from APIs. Read [SECURITY.md](SECURITY.md) before exposing an instance.
+
+## Development
 
 ```bash
 .venv/bin/pytest -q
-.venv/bin/ruff check src tests
-cd console && npm run build
+.venv/bin/ruff check src tests examples
+npm run build --prefix console
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) and [docs/DELIVERY.md](docs/DELIVERY.md). The delivery checklist is intentionally honest about capabilities that are still being implemented; this repository is not labelled a stable release yet.
+The full release gate is:
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/check_release.py
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local conventions and change expectations. Eivon is an evolving foundation release; deployment-specific connectors, model quality and OS-level sandboxing remain the responsibility of each deployment.
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE).
-
-Workflow authoring, branching, input/approval waits and execution inspection are covered in the [workflow guide](docs/workflows.md). The console includes a structured editor and a Run history inspector; [delivery status](docs/DELIVERY.md) tracks capabilities still pending.
-
-The [resource guide](docs/resources.md) covers capability authoring, immutable releases, specification comparisons, rollback and archive/restore.
-
-See [workspace administration](docs/administration.md) for scope selection, member roles, credential rotation and key revocation.
-
-The [evaluation guide](docs/evaluations.md) covers release comparison, human scoring and reviewed Prompt/Skill improvements.
+Eivon is released under the [Apache License 2.0](LICENSE).
