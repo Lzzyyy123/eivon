@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/eivon-logo.png" alt="Eivon logo" width="156" />
+  <img src="assets/eivon-mark.svg" alt="Eivon logo" width="112" />
 </p>
 
 <h1 align="center">Eivon</h1>
@@ -20,7 +20,7 @@ Eivon is a self-hosted, domain-independent agent framework. It provides a contro
 
 The core does not know whether an Agent serves agriculture, customer support, operations, research or a completely new domain. A vertical implementation lives in resources, Bundles and reviewed extensions. The framework owns the contracts, execution boundary, persistence, approvals, evaluation and management experience.
 
-![Eivon conversation and private file delivery](docs/images/agent-conversation.png)
+![Eivon management console](docs/images/eivon-console.png)
 
 ## Why Eivon
 
@@ -72,6 +72,8 @@ cd console && npm ci && npm run build && cd ..
 ```
 
 Open <http://127.0.0.1:8787>. The first command creates `var/setup-token`; paste that token into the setup screen. The offline demo model lets you complete the first walkthrough without a provider key.
+
+The management console supports English and Simplified Chinese. Switch languages from the header or Settings; your preference persists in the browser.
 
 For PostgreSQL and a production-like container deployment:
 

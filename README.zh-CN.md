@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/eivon-logo.png" alt="Eivon 徽标" width="156" />
+  <img src="assets/eivon-mark.svg" alt="Eivon 徽标" width="112" />
 </p>
 
 <h1 align="center">Eivon</h1>
@@ -20,7 +20,7 @@ Eivon 是一个自托管、与业务领域无关的智能体框架。它提供�
 
 核心不关心 Agent 服务的是农业、客服、运维、研究，还是一个全新的领域。垂直业务应该沉淀在资源、Bundle 和经过审核的扩展中；框架负责契约、执行边界、持久化、审批、评测和管理体验。
 
-![Eivon 对话与私有文件交付](docs/images/agent-conversation.png)
+![Eivon 管理控制台](docs/images/eivon-console.png)
 
 ## 为什么选择 Eivon
 
@@ -72,6 +72,8 @@ cd console && npm ci && npm run build && cd ..
 ```
 
 打开 <http://127.0.0.1:8787>。初始化会生成 `var/setup-token`，把这个 Token 粘贴到设置页面即可。离线 Demo 模型可以让你在没有模型 API Key 的情况下完成第一次体验。
+
+管理控制台支持英文和简体中文，可通过顶部语言切换器或“设置”页面切换；浏览器会记住你的选择。
 
 使用 PostgreSQL 和接近生产的容器部署：
 
