@@ -48,7 +48,7 @@ aside nav { display: grid; gap: 3px; }
 .logout { color: #b6c9b9; }
 .logout:hover { color: #fff; }
 
-.content { min-width: 0; padding: 28px clamp(22px, 3.2vw, 48px) 54px; }
+.content { min-width: 0; max-width: none; padding: 28px clamp(22px, 3.2vw, 48px) 54px; }
 .content header { min-height: 82px; align-items: center; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
 .content header h1 { font-size: clamp(25px, 2.1vw, 31px); color: #233229; letter-spacing: 0; margin: 6px 0 0; }
 .eyebrow, .nav-label { color: #73867b; letter-spacing: 0; text-transform: uppercase; }
@@ -85,7 +85,7 @@ aside nav { display: grid; gap: 3px; }
 .overview-columns > section { min-width: 0; }
 .section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; margin-bottom: 14px; }
 .section-heading h3 { color: #253a2d; font-size: 17px; letter-spacing: 0; margin: 6px 0 0; }
-.activity-list, .quick-actions { border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff; }
+.activity-list, .quick-actions { min-height: 158px; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff; }
 .activity-list button, .quick-actions button { min-height: 52px; width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 11px 17px; color: #2d4334; background: #fff; border: 0; border-bottom: 1px solid var(--line); font-size: 12px; }
 .activity-list button:last-child, .quick-actions button:last-child { border-bottom: 0; }
 .activity-list button:hover, .quick-actions button:hover { background: #f1f7f0; }
@@ -98,7 +98,7 @@ aside nav { display: grid; gap: 3px; }
 .quick-actions button svg:first-child { color: #2e8059; }
 .quick-actions button span { flex: 1; font-weight: 700; }
 .quick-actions button svg:last-child { color: #8aa290; }
-.empty-inline { padding: 28px; color: var(--muted); font-size: 12px; }
+.empty-inline { display: flex; align-items: center; min-height: 156px; padding: 28px; color: var(--muted); font-size: 12px; }
 @keyframes signal-pulse { 50% { opacity: .4; } }
 
 .resource-card, .workflow-list, .workflow-editor, .chat-panel, .trace-panel, .settings-card, .run-table { background: #fff; color: #25362b; border-color: var(--line); border-radius: 7px; box-shadow: none; }
