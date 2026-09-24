@@ -11,6 +11,7 @@ test("bind a knowledge connection and search lexical, semantic and hybrid contex
   expect(embedding.status()).toBe(201); const embeddingItem = await embedding.json();
   expect((await page.request.post(`/api/v1/resources/${embeddingItem.id}/publish`, { headers, data: { revision: embeddingItem.revision } })).status()).toBe(201);
   await page.getByRole("button", { name: "08 Knowledge", exact: true }).click();
+  await page.getByRole("button", { name: "New collection" }).first().click();
   const collection = page.getByRole("form", { name: "Create collection" });
   await collection.getByLabel("Name", { exact: true }).fill("Product manuals");
   await collection.getByLabel("Description", { exact: true }).fill("Semantic retrieval examples");
@@ -18,6 +19,7 @@ test("bind a knowledge connection and search lexical, semantic and hybrid contex
   await collection.getByLabel("Embedding provider").selectOption(embeddingItem.id);
   await collection.getByRole("button", { name: "Create collection", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Collection created");
+  await page.getByRole("button", { name: "Index document", exact: true }).click();
   const document = page.getByRole("form", { name: "Index document" });
   await document.getByLabel("Title", { exact: true }).fill("Reset procedure");
   await document.getByLabel("Source URI", { exact: true }).fill("manual://reset");
@@ -34,4 +36,9 @@ test("bind a knowledge connection and search lexical, semantic and hybrid contex
   await search.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page.getByText("manual://reset", { exact: true })).toBeVisible();
   await expect(page.getByText(/Collection created/)).toHaveCount(0);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.screenshot({ path: "/tmp/eivon-knowledge-populated-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.screenshot({ path: "/tmp/eivon-knowledge-populated-mobile.png", fullPage: true });
 });
