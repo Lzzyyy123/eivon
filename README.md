@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/eivon-mark.svg" alt="Eivon logo" width="112" />
+  <img src="assets/eivon-mark.png" alt="Eivon logo" width="112" />
 </p>
 
 <h1 align="center">Eivon</h1>

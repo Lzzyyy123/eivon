@@ -17,7 +17,7 @@ function Button({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonEle
 function Badge({ children }: { children: React.ReactNode }) { return <span className="badge">{children}</span>; }
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
-  return <div className={`brand-lockup${compact ? " compact" : ""}`}><img src="/eivon-mark.svg" alt="" /><span className="brand-name">EIVON</span><small>{compact ? t("WORKBENCH") : t("AGENT WORKBENCH")}</small></div>;
+  return <div className={`brand-lockup${compact ? " compact" : ""}`}><img src="/eivon-mark.png" alt="" /><span className="brand-name">EIVON</span><small>{compact ? t("WORKBENCH") : t("AGENT WORKBENCH")}</small></div>;
 }
 
 function LanguageSwitch({ className = "" }: { className?: string }) {
